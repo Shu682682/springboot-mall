@@ -1,12 +1,17 @@
 package com.shushu.springbootmall.dao.impl;
 
 import com.shushu.springbootmall.dao.ProductDao;
+import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +38,35 @@ public class ProductDaoImpl implements ProductDao {
             return prodcutList.get(0);
         }else{  return null;
         }
+
+    }
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
+        //insert product的sql去設定每個欄位的值 把數據塞到資料庫
+        String sql="INSERT INTO product(product_name, category, image_url, price, stock, " +
+                "description, created_date, last_modified_date) " +
+                "VALUES(:productName, :category, :imageUrl, :price, :stock, :description,"+
+                ":createdDate, :lastModifiedDate)";
+        //把前端前回的productreqeust參數一個一個加入map
+        Map<String, Object> map =new HashMap<>();
+        map.put("productName", productRequest.getProductName());
+        map.put("category", productRequest.getCategory().toString());
+        map.put("imageUrl", productRequest.getImageUrl());
+        map.put("price",productRequest.getPrice());
+        map.put("stock",productRequest.getStock());
+        map.put("description",productRequest.getDescription());
+        //new date紀錄當下時間把當下時間當成商品創建跟最後加入的時間
+        Date now =new Date();
+        map.put("createdDate", now);
+        map.put("lastModifiedDate", now);
+        //keyholder儲存資料庫自動生成的productId
+        KeyHolder keyHolder=new GeneratedKeyHolder();
+
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map),keyHolder);
+        //將productID回傳出去(可參考第五章）
+        int productId= keyHolder.getKey().intValue();
+        return productId;
 
     }
 }
