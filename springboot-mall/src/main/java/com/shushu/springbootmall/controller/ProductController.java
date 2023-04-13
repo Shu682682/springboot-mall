@@ -58,9 +58,17 @@ public class ProductController {
         //查詢更新後的商品數據 （）productId的值當成參數傳進去
         return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
         //回傳給前端 http=200OK 更新過後的商品數據放在body(修改後的值);
-
-
+    }
+    @DeleteMapping("/products/{productId}")//將productid的值透過url路徑傳進來
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId){
+        //表示productId的值從url路徑傳過來的
+        productService.deleteProductById(productId);//不用特別返回值
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        //表示數據被刪掉204把整個response回傳給前端
+        //只要商品消失了就表示成功了所以不用確定本來有沒有值
+        //前端只要確認他消失不見就好了就表示這個功能是成功的 所以不需要加404的判斷
 
 
     }
+
 }

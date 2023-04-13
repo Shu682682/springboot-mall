@@ -9,4 +9,5 @@ public interface ProductService {
 
     //update product沒有返回值寫void
     void updateProduct(Integer productId, ProductRequest productRequest);
+    void deleteProductById(Integer productId);
 }

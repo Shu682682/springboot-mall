@@ -90,6 +90,14 @@ public class ProductDaoImpl implements ProductDao {
         map.put("lastModifiedDate", new Date());
         namedParameterJdbcTemplate.update(sql, map);
         //執行這條sql修改商品的數據
+    }
+
+    @Override//刪除商品
+    public void deleteProductById(Integer productId) {
+        String sql ="DELETE FROM product WHERE product_id= :productId";
+        Map<String, Object> map =new HashMap<>();
+        map.put("productId", productId);
+        namedParameterJdbcTemplate.update(sql, map);//執行刪除
 
 
     }
