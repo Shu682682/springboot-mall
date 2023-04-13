@@ -1,13 +1,13 @@
 package com.shushu.springbootmall.service;
 
-import com.shushu.springbootmall.constant.ProductCategory;
+import com.shushu.springbootmall.dto.ProductQueryParams;
 import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 
 import java.util.List;
 
 public interface ProductService {
-    List<Product> getProducts(ProductCategory category, String search);
+    List<Product> getProducts(ProductQueryParams productQueryParams);
     Product getProductById(Integer productId);
     Integer createProduct(ProductRequest productRequest);
 

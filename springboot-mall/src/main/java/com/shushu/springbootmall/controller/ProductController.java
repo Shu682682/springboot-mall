@@ -1,6 +1,7 @@
 package com.shushu.springbootmall.controller;
 
 import com.shushu.springbootmall.constant.ProductCategory;
+import com.shushu.springbootmall.dto.ProductQueryParams;
 import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.service.ProductService;
@@ -27,7 +28,12 @@ public class ProductController {
             //前端可透過傳進來的category去指定要查看哪一類的商品
             //針對有預先定義的catoger的值可以用product cateogry enum springboot會自動幫忙轉換前端傳過來的category
             ){
-        List<Product> productList=productService.getProducts(category, search);//search也要加入這裡
+        ProductQueryParams productQueryParams=new ProductQueryParams();//創建QP變數儲存前端傳送的參數
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);//把search值設定進去productqueryparams
+
+        List<Product> productList=productService.getProducts(productQueryParams);
+        //不管添加多少新的變數都可以固定傳遞productQueryParams
         //方法會回傳商品列表前面要加上List<Product>去接住getproducts返回的變數
         return ResponseEntity.status(HttpStatus.OK).body(productList);
         //回傳給前端 內容要寫productlist的值

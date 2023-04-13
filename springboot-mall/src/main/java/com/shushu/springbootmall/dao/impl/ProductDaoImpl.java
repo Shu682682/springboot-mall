@@ -1,7 +1,7 @@
 package com.shushu.springbootmall.dao.impl;
 
-import com.shushu.springbootmall.constant.ProductCategory;
 import com.shushu.springbootmall.dao.ProductDao;
+import com.shushu.springbootmall.dto.ProductQueryParams;
 import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.rowmapper.ProductRowMapper;
@@ -24,7 +24,7 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {//
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {//
         //SELECt sql無參數 全部先查詢出來
         String sql="SELECT product_id, product_name, category, image_url, price, stock, " +
                 "description, created_date, last_modified_date " +
@@ -32,17 +32,17 @@ public class ProductDaoImpl implements ProductDao {
                 //組合下面的查詢條件可用最簡單的方式去拼接and雨具在下面
                 //spring dataJPA會自動使用不需要添加
         Map<String, Object> map =new HashMap<>();//建立空map
-        if(category != null){//假設cat不能null
+        if(productQueryParams.getCategory() != null){//假設cat不能null
             sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
-            map.put("category", category.name());//把前端的category參數是enum類型所以要使用name方法
+            map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
             //將enum類型轉為字串把字串加入map
         }
         //如果要在dao層＋null判斷 檢查前端有沒有傳參數進來！(特別注意）
-        if(search !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
+        if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
             sql=sql+" AND product_name LIKE :search";
             //補充：SQL LIKE用法=product_name LIKE "蘋果％"表示查詢以蘋果為開頭的用法
             //只要商品名稱中有出現蘋果就改成"%蘋果%"
-            map.put("search", "%" +search +"%");//一定要寫在map的值裡面不能寫在sql語句
+            map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
         }
 
         List<Product> productList=namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
