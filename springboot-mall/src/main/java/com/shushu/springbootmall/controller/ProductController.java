@@ -1,4 +1,5 @@
 package com.shushu.springbootmall.controller;
+
 import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.service.ProductService;
@@ -8,11 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
     @Autowired
     private ProductService productService;
-    @GetMapping("/products/{productId}")//取得某個商品的數據
+    @GetMapping("/products")//因為商品很多所以要記得products要記得+s（必須)
+    //查詢商品列表反回list(裡面裝的是product數據)名稱設為getPRODUCTS
+    public ResponseEntity<List<Product>> getProducts(){
+        List<Product> productList=productService.getProducts();
+        //方法會回傳商品列表前面要加上List<Product>去接住getproducts返回的變數
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        //回傳給前端 內容要寫productlist的值
+        //補充；為何不用設計確認商品是否存在 因為RESTful的理念get/product資源還是存在
+
+    }
+
+    @GetMapping("/products/{productId}")//取得某個商品的數據 /代表階層跟子集合
     public ResponseEntity<Product>getProduct(@PathVariable Integer productId){
         //這個productId的值是url路徑傳進來
         //前端請求url路徑透過get去資料庫中查詢數據
