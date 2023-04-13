@@ -39,4 +39,28 @@ public class ProductController {
        //回傳response給前段 created=201（創建的商品數據放在(body)裡面
        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest){
+        //接住url路徑傳回來的product值(Pathvariable) productId的值
+        //Requestbody 接住前端返回的json參數要記得加上valid註解（for notnull才會生效）因為這是允許前端去修改的
+        //Product request參數適合前端只能修product reuqest中變數的值
+
+        //可以先檢查商品有沒有存在
+        Product product =productService.getProductById(productId);
+        if(product ==null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        //修改商品的數據
+        productService.updateProduct(productId, productRequest);
+        //第一個參數id:要背更新的商品 第二個：request表示商品修改過後的值
+        //updateProduct不會特別返回什麼值
+        Product updatedProduct= productService.getProductById((productId));
+        //查詢更新後的商品數據 （）productId的值當成參數傳進去
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+        //回傳給前端 http=200OK 更新過後的商品數據放在body(修改後的值);
+
+
+
+
+    }
 }
