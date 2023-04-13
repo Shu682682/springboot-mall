@@ -1,5 +1,6 @@
 package com.shushu.springbootmall.controller;
 
+import com.shushu.springbootmall.constant.ProductCategory;
 import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.service.ProductService;
@@ -17,8 +18,16 @@ public class ProductController {
     private ProductService productService;
     @GetMapping("/products")//因為商品很多所以要記得products要記得+s（必須)
     //查詢商品列表反回list(裡面裝的是product數據)名稱設為getPRODUCTS
-    public ResponseEntity<List<Product>> getProducts(){
-        List<Product> productList=productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false)ProductCategory category,
+            @RequestParam(required = false) String search//表示search不是必填=選填
+            //required=false表示這是可選的參數4-7 (不帶參數也會回傳資料,就會回傳全部分類的資料)
+            //使用商品分類篩選特定商品出來
+            // RequestParam表示從url 請求取得的參數
+            //前端可透過傳進來的category去指定要查看哪一類的商品
+            //針對有預先定義的catoger的值可以用product cateogry enum springboot會自動幫忙轉換前端傳過來的category
+            ){
+        List<Product> productList=productService.getProducts(category, search);//search也要加入這裡
         //方法會回傳商品列表前面要加上List<Product>去接住getproducts返回的變數
         return ResponseEntity.status(HttpStatus.OK).body(productList);
         //回傳給前端 內容要寫productlist的值
