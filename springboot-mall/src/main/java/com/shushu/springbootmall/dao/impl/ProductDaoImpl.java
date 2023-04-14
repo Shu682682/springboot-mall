@@ -24,6 +24,30 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String sql= "SELECT count(*) FROM product WHERE 1=1";
+        //實作查詢條件 根據前端傳過來的查詢條件的值去拼接sql語句
+        Map<String, Object> map =new HashMap<>();//建立空map
+        //查詢條件的sql語句
+        if(productQueryParams.getCategory() != null){//假設cat不能null
+            sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
+            map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
+            //將enum類型轉為字串把字串加入map
+        }
+        if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
+            sql=sql+" AND product_name LIKE :search";
+            //補充：SQL LIKE用法=product_name LIKE "蘋果％"表示查詢以蘋果為開頭的用法
+            //只要商品名稱中有出現蘋果就改成"%蘋果%"
+            map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
+        }
+        Integer total=namedParameterJdbcTemplate.queryForObject(sql, map,Integer.class);
+        ///queryforobject用在取得count值
+        //Integer.class表示要將count值轉換成Integer類型
+        //Integer total 可以接著countsql語句的查詢結果
+        return total;
+    }
+
+    @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {//
         //SELECt sql無參數 全部先查詢出來
         String sql="SELECT product_id, product_name, category, image_url, price, stock, " +
