@@ -29,17 +29,7 @@ public class ProductDaoImpl implements ProductDao {
         //實作查詢條件 根據前端傳過來的查詢條件的值去拼接sql語句
         Map<String, Object> map =new HashMap<>();//建立空map
         //查詢條件的sql語句
-        if(productQueryParams.getCategory() != null){//假設cat不能null
-            sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
-            map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
-            //將enum類型轉為字串把字串加入map
-        }
-        if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
-            sql=sql+" AND product_name LIKE :search";
-            //補充：SQL LIKE用法=product_name LIKE "蘋果％"表示查詢以蘋果為開頭的用法
-            //只要商品名稱中有出現蘋果就改成"%蘋果%"
-            map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
-        }
+        sql=addFilteringSql(sql, map, productQueryParams);
         Integer total=namedParameterJdbcTemplate.queryForObject(sql, map,Integer.class);
         ///queryforobject用在取得count值
         //Integer.class表示要將count值轉換成Integer類型
@@ -57,19 +47,7 @@ public class ProductDaoImpl implements ProductDao {
                 //spring dataJPA會自動使用不需要添加
         Map<String, Object> map =new HashMap<>();//建立空map
         //查詢條件的sql語句
-        if(productQueryParams.getCategory() != null){//假設cat不能null
-            sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
-            map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
-            //將enum類型轉為字串把字串加入map
-        }
-        //如果要在dao層＋null判斷 檢查前端有沒有傳參數進來！(特別注意）
-        //排序的sql語句
-        if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
-            sql=sql+" AND product_name LIKE :search";
-            //補充：SQL LIKE用法=product_name LIKE "蘋果％"表示查詢以蘋果為開頭的用法
-            //只要商品名稱中有出現蘋果就改成"%蘋果%"
-            map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
-        }
+        sql=addFilteringSql(sql, map, productQueryParams);
         //分頁的sql語句
         sql=sql+" ORDER BY "+productQueryParams.getOrderBy()+" "+productQueryParams.getSort();
         //會在ＷＨＥＲＥ語句後面拼接sql語法 並根據orderBY指定的欄位進行升序
@@ -164,8 +142,21 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map =new HashMap<>();
         map.put("productId", productId);
         namedParameterJdbcTemplate.update(sql, map);//執行刪除
+    }
 
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams){
+        //根據傳進來的參數去拼接sql語句
+        //以後利用查詢條件去拼接sql語句只要使用addfiltersql的方法就可以達到效果
+        if(productQueryParams.getCategory() != null){
+            sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
+            map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
+        }
 
+        if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
+            sql=sql+" AND product_name LIKE :search";
+            map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
+        }
+        return sql;
     }
 
 
