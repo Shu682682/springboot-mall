@@ -32,23 +32,31 @@ public class ProductDaoImpl implements ProductDao {
                 //組合下面的查詢條件可用最簡單的方式去拼接and雨具在下面
                 //spring dataJPA會自動使用不需要添加
         Map<String, Object> map =new HashMap<>();//建立空map
+        //查詢條件的sql語句
         if(productQueryParams.getCategory() != null){//假設cat不能null
             sql=sql+" AND category=:category";//一定要在and前面留一個空白鍵在拼接語句才不回跟前面查詢條件年再一起
             map.put("category", productQueryParams.getCategory().name());//把前端的category參數是enum類型所以要使用name方法
             //將enum類型轉為字串把字串加入map
         }
         //如果要在dao層＋null判斷 檢查前端有沒有傳參數進來！(特別注意）
+        //排序的sql語句
         if(productQueryParams.getSearch() !=null){//只要 search 不是null 就會在後面去拼接語句 and 一定要留下空白建 拼接sql才不會出問題
             sql=sql+" AND product_name LIKE :search";
             //補充：SQL LIKE用法=product_name LIKE "蘋果％"表示查詢以蘋果為開頭的用法
             //只要商品名稱中有出現蘋果就改成"%蘋果%"
             map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
         }
+        //分頁的sql語句
         sql=sql+" ORDER BY "+productQueryParams.getOrderBy()+" "+productQueryParams.getSort();
         //會在ＷＨＥＲＥ語句後面拼接sql語法 並根據orderBY指定的欄位進行升序
         //只能使用字串拼接sql語句不能用變數去使用e.g. :search (技術限制）
         //不用檢查參數是否為null 因為有寫Defaultvalue設定
         // 拼接sql語句一定要記得前後留空白鍵e.g. " ORDER BY "
+
+        sql=sql +" LIMIT :limit OFFSET :offset";
+        map.put("limit", productQueryParams.getLimit());//把前端傳過來limit的值加入map
+        map.put("offset", productQueryParams.getOffset());//沒＋null判斷式因為有在controller曾設定預設值
+        // 即使前端沒傳參數兩個參數也不會是null
 
         List<Product> productList=namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         //執行玩sql取得資料數據後回傳出去

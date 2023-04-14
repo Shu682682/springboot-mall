@@ -6,13 +6,16 @@ import com.shushu.springbootmall.dto.ProductRequest;
 import com.shushu.springbootmall.model.Product;
 import com.shushu.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Validated//max跟min才會生效4-13
 @RestController
 public class ProductController {
     @Autowired
@@ -27,7 +30,13 @@ public class ProductController {
             //sorting=控制商品數據的排序
             @RequestParam(defaultValue = "created_date") String orderBy,
             //要根據什麼欄位進行排//假設前端沒有傳過來預設就是createddate
-            @RequestParam(defaultValue = "desc") String sort   //升旭或降序desc=降序
+            @RequestParam(defaultValue = "desc") String sort,   //升旭或降序desc=降序
+
+            //分頁Pagination requried=false=可選/defaultvalue=前端沒傳值會用預先定義的值
+            @RequestParam(defaultValue = "5" ) @Max(1000) @Min(0) Integer limit,
+            //表示這次要取得幾筆商品數據 最大不能超過1000筆 最少不能小於0 (避免前端傳負數）
+            @RequestParam(defaultValue = "0" ) @Min(0) Integer offset//表示要跳過多少比數據，max不用限制因為是跳過值
+            //保護後端存取資料庫的效能
 
 
             ){
@@ -36,6 +45,8 @@ public class ProductController {
         productQueryParams.setSearch(search);//把search值設定進去productqueryparams
         productQueryParams.setOrderBy(orderBy);//把前端返回的參數設定到productqueryparameter裡面
         productQueryParams.setSort(sort);
+        productQueryParams.setLimit(limit);
+        productQueryParams.setOffset(offset);
 
 
         List<Product> productList=productService.getProducts(productQueryParams);
