@@ -21,6 +21,7 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
     @GetMapping("/products")//因為商品很多所以要記得products要記得+s（必須)
     //查詢商品列表反回list(裡面裝的是product數據)名稱設為getPRODUCTS
     public ResponseEntity<Page<Product>> getProducts(//修改返回的格式=page 表示要回傳的事page類型的product數據
