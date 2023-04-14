@@ -44,6 +44,11 @@ public class ProductDaoImpl implements ProductDao {
             //只要商品名稱中有出現蘋果就改成"%蘋果%"
             map.put("search", "%" +productQueryParams.getSearch() +"%");//一定要寫在map的值裡面不能寫在sql語句
         }
+        sql=sql+" ORDER BY "+productQueryParams.getOrderBy()+" "+productQueryParams.getSort();
+        //會在ＷＨＥＲＥ語句後面拼接sql語法 並根據orderBY指定的欄位進行升序
+        //只能使用字串拼接sql語句不能用變數去使用e.g. :search (技術限制）
+        //不用檢查參數是否為null 因為有寫Defaultvalue設定
+        // 拼接sql語句一定要記得前後留空白鍵e.g. " ORDER BY "
 
         List<Product> productList=namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         //執行玩sql取得資料數據後回傳出去

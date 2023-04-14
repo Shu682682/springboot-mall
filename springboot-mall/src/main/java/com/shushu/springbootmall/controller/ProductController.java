@@ -20,17 +20,23 @@ public class ProductController {
     @GetMapping("/products")//因為商品很多所以要記得products要記得+s（必須)
     //查詢商品列表反回list(裡面裝的是product數據)名稱設為getPRODUCTS
     public ResponseEntity<List<Product>> getProducts(
+            //Requestparam表示從url請求的參數
+            //查詢條件filering(category/search)
             @RequestParam(required = false)ProductCategory category,
-            @RequestParam(required = false) String search//表示search不是必填=選填
-            //required=false表示這是可選的參數4-7 (不帶參數也會回傳資料,就會回傳全部分類的資料)
-            //使用商品分類篩選特定商品出來
-            // RequestParam表示從url 請求取得的參數
-            //前端可透過傳進來的category去指定要查看哪一類的商品
-            //針對有預先定義的catoger的值可以用product cateogry enum springboot會自動幫忙轉換前端傳過來的category
+            @RequestParam(required = false) String search,//表示search不是必填=
+            //sorting=控制商品數據的排序
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            //要根據什麼欄位進行排//假設前端沒有傳過來預設就是createddate
+            @RequestParam(defaultValue = "desc") String sort   //升旭或降序desc=降序
+
+
             ){
         ProductQueryParams productQueryParams=new ProductQueryParams();//創建QP變數儲存前端傳送的參數
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);//把search值設定進去productqueryparams
+        productQueryParams.setOrderBy(orderBy);//把前端返回的參數設定到productqueryparameter裡面
+        productQueryParams.setSort(sort);
+
 
         List<Product> productList=productService.getProducts(productQueryParams);
         //不管添加多少新的變數都可以固定傳遞productQueryParams
