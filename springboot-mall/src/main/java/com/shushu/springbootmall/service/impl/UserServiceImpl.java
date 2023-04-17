@@ -1,6 +1,7 @@
 package com.shushu.springbootmall.service.impl;
 
 import com.shushu.springbootmall.dao.UserDao;
+import com.shushu.springbootmall.dto.UserLoginRequest;
 import com.shushu.springbootmall.dto.UserRegisterRequest;
 import com.shushu.springbootmall.model.User;
 import com.shushu.springbootmall.service.UserService;
@@ -43,7 +44,24 @@ public class UserServiceImpl implements UserService {
         //直接去call Userdao createuser的方法把userRegisterRequest傳進去
         //並且把userdao的返回值回傳進去
 
-
     }
 
+    @Override//檢查使用者輸入的帳號密碼是否在資料庫中儲存的完全醫治
+    public User login(UserLoginRequest userLoginRequest) {
+        User user =userDao.getUserByEamil(userLoginRequest.getEmail());
+                //使用dao層根據前端的值去資歷庫中查詢
+        //假設存在就可以去查密碼是否一樣若不一樣就是null
+        if(user==null) {log.warn("該email{}尚未註冊", userLoginRequest.getEmail());
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
+        //throw new 強制停止前端請求並輸出badrequest給前端
+        if(user.getPassword().equals(userLoginRequest.getPassword())){
+            //比較string要用equals
+            //passwrod =前端傳過來的password回傳user數據
+            return user;
+        }else{
+            //資料不正確log記錄使用者密碼不正確並thron強制停止前端請求
+            log.warn("email{} 的密碼不正確",userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
