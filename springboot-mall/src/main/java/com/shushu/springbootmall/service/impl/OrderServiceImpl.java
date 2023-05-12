@@ -5,6 +5,7 @@ import com.shushu.springbootmall.dao.ProductDao;
 import com.shushu.springbootmall.dao.UserDao;
 import com.shushu.springbootmall.dto.BuyItem;
 import com.shushu.springbootmall.dto.CreateOrderRequest;
+import com.shushu.springbootmall.dto.OrderQueryParams;
 import com.shushu.springbootmall.model.Order;
 import com.shushu.springbootmall.model.OrderItem;
 import com.shushu.springbootmall.model.Product;
@@ -31,6 +32,21 @@ public class OrderServiceImpl implements OrderService {
     private ProductDao productDao;
     @Autowired
     private UserDao userDao;
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        List<Order> orderList=orderDao.getOrders(orderQueryParams);
+         for(Order order: orderList){
+            List<OrderItem>orderItemList=orderDao.getOrderItemsByOrderId(order.getOrderId());
+            order.setOrderItemList(orderItemList);
+        }
+        return orderList;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {
@@ -91,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
             // 把資料都加入上面的list當中  當成參數傳到dao幫我們在資料庫中插入數據
 
         }
-        //創店訂單
+        //創建訂單
         Integer orderId=orderDao.createOrder(userId, totalAmount);
         //Dao在ordertable創建一筆數據
         orderDao.createOrderItems(orderId, orderItemList);

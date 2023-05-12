@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS product
     last_modified_date TIMESTAMP    NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS ˋuserˋ
+CREATE TABLE IF NOT EXISTS `user`
 (
     user_id            INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
     email              VARCHAR(256) NOT NULL UNIQUE,
@@ -19,6 +19,24 @@ CREATE TABLE IF NOT EXISTS ˋuserˋ
     created_date       TIMESTAMP    NOT NULL,
     last_modified_date TIMESTAMP    NOT NULL
     );
+
+CREATE TABLE IF NOT EXISTS `order`
+(
+    order_id           INT       NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id            INT       NOT NULL,
+    total_amount       INT       NOT NULL,
+    created_date       TIMESTAMP NOT NULL,
+    last_modified_date TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS order_item
+(
+    order_item_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    order_id      INT NOT NULL,
+    product_id    INT NOT NULL,
+    quantity      INT NOT NULL,
+    amount        INT NOT NULL
+);
 
 
 

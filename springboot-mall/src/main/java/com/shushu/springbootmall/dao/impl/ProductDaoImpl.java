@@ -76,10 +76,10 @@ public class ProductDaoImpl implements ProductDao {
         //去執行select的sql語法去查詢商品數據
         // 第一個sql變數 2 map 3轉換數據的roadmapper(將sql中的數據轉換成java Object(先去新增rowmaaperpaackge
         //接住query方法的煩回值
-        List<Product> prodcutList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
+        List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         //建立判斷式如果size>0才取得第一個值返回，若為空則反回null
-        if(prodcutList.size()>0){
-            return prodcutList.get(0);
+        if(productList.size()>0){
+            return productList.get(0);
         }else{  return null;
         }
 
@@ -138,8 +138,8 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void updateStock(Integer productId, Integer stock) {
-        String sql ="UPDATE product SET stock =:stock, last_modified_date =:lastModifiedDate " +
-                "WHERE prodcut_id =:productId ";//更新stock 跟lastmodifiedDate
+        String sql ="UPDATE product SET stock = :stock, last_modified_date = :lastModifiedDate" +
+                " WHERE product_id =:productId ";//更新stock 跟lastmodifiedDate
         Map<String, Object> map =new HashMap<>();
         map.put("productId",productId);
         map.put("stock", stock);
