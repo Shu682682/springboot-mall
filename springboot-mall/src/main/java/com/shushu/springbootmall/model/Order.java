@@ -8,7 +8,7 @@ public class Order {
     private Integer userId;
     private Integer totalAmount;
     private Date createdDate;
-    private Date lastModifedDate;
+    private Date lastModifiedDate;
     private List<OrderItem> orderItemList;
 
     public Integer getOrderId() {
@@ -43,12 +43,12 @@ public class Order {
         this.createdDate = createdDate;
     }
 
-    public Date getLastModifedDate() {
-        return lastModifedDate;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setLastModifedDate(Date lastModifedDate) {
-        this.lastModifedDate = lastModifedDate;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public List<OrderItem> getOrderItemList() {

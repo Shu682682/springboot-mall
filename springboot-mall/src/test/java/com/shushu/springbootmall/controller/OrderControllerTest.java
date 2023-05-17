@@ -62,8 +62,8 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.userId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
                 .andExpect(jsonPath("$.orderItemList", hasSize(2)))
-                .andExpect(jsonPath("$.createdDate", notNullValue()));
-                //.andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.createdDate", notNullValue()))
+                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
     @Transactional
@@ -173,13 +173,13 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.results[0].totalAmount", equalTo(100000)))
                 .andExpect(jsonPath("$.results[0].orderItemList", hasSize(1)))
                 .andExpect(jsonPath("$.results[0].createdDate", notNullValue()))
-                //.andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
+                .andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].orderId", notNullValue()))
                 .andExpect(jsonPath("$.results[1].userId", equalTo(1)))
                 .andExpect(jsonPath("$.results[1].totalAmount", equalTo(500690)))
                 .andExpect(jsonPath("$.results[1].orderItemList", hasSize(3)))
-                .andExpect(jsonPath("$.results[1].createdDate", notNullValue()));
-                //.andExpect(jsonPath("$.results[1].lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.results[1].createdDate", notNullValue()))
+                .andExpect(jsonPath("$.results[1].lastModifiedDate", notNullValue()));
     }
 
     @Test
